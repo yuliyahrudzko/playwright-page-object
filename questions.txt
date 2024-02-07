@@ -1,0 +1,8 @@
+1. Why do we need this part? Что мы здесь должно прописать? и какие типи(?) бывают
+  readonly page: Page;
+  readonly userName: Locator;
+  readonly password: Locator;
+  readonly loginBtn: Locator;
+  readonly userId: Locator;
+  readonly context: BrowserContext;
+2. Где объявлять переменные?
