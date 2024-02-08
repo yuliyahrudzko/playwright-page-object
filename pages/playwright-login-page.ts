@@ -6,7 +6,6 @@ export class PlaywrightLoginPage {
   readonly userName: Locator;
   readonly password: Locator;
   readonly loginBtn: Locator;
-  readonly userId: Locator;
   readonly context: BrowserContext;
 
   constructor(page: Page, context: BrowserContext) {
@@ -40,30 +39,22 @@ export class PlaywrightLoginPage {
   }
 
   async getCookies() {
-    const cookies = this.context.cookies('https://demoqa.com/');
-    
-    return cookies;
+    return await this.context.cookies('https://demoqa.com/');
   }
 
   async getUserID() {
-    const userID = (await this.getCookies()).find(c => c.name === 'userID')?.value;
-
-    return userID;
+    return (await this.getCookies()).find(c => c.name === 'userID')?.value;
   }
 
   async getUserName() {
-    const userName = (await this.getCookies()).find(c => c.name === 'userName')?.value;
-
-    return userName;
+    return (await this.getCookies()).find(c => c.name === 'userName')?.value;
   }
 
   async getToken() {
-    const token = (await this.getCookies()).find(c => c.name === 'token')?.value;
-
-    return token;
+    return (await this.getCookies()).find(c => c.name === 'token')?.value;
   }
 
   async getExpiresCookie() {
-    (await this.getCookies()).find(c => c.name === 'expires')?.value;
+    return (await this.getCookies()).find(c => c.name === 'expires')?.value;
   }
 }

@@ -2,14 +2,13 @@ import { Locator, Page } from "@playwright/test";
 
 export class PlaywrightBooksPage {
   readonly page: Page;
-  readonly goToStore: Locator;
   readonly booksCountOnUi: Locator;
-  readonly bookNumber: Locator;
+  //readonly bookToOpen: Locator;
 
   constructor (page: Page) {
     this.page = page;
-    this.goToStore = page.locator('#gotoStore');
     this.booksCountOnUi = page.locator('.rt-tbody>div img');
+    //this.bookToOpen = page.locator(`.rt-tbody>div:nth-child(${bookNumber}) a`)
   }
 
   async createPromise() {
@@ -18,16 +17,12 @@ export class PlaywrightBooksPage {
     );
   }
 
-  async triggerGetRequest() {
-    await this.goToStore.click();
-  }
-
   async makeScreenshot(){
     await this.page.screenshot( { path: 'screenshot.png' } );
   }
 
-  async getNumberOfBooksInResponse() {
-    (await this.createPromise()).json().then(data => {
+  async getNumberOfBooksInResponse(booksResponse) { // можно ли использовать параметры в page файлах при создании методов???
+    return await booksResponse.json().then(data => { 
       return data.books.length;
     });
   }
@@ -36,36 +31,43 @@ export class PlaywrightBooksPage {
     return await this.booksCountOnUi.count();
   }
 
-  async changeNumberOfPages() {
-    const newPageCount = String(Math.floor(Math.random() * (1000 - 1) + 1));
-
-    //page.route() to mock network in a single page.
+  async changeNumberOfPages(newPageCount) {
     this.page.route('https://demoqa.com/BookStore/v1/Book?**', async route => {
-      //Fetch original response.
       const response = await route.fetch();
       let body = await response.text();
 
       body = body.replace(await response.json().then(data => data.pages), newPageCount);
       route.fulfill({
-        //Pass all fields from the response.
         response,
-        //Override response body.
         body
       });
     });
   }
-/*
-  async verifyInfoInAccountRequest() {
 
-    const response = await page.request.get(`https://demoqa.com/Account/v1/User/${USERID}`, {
+  async getResponse(userID, token) { // можно ли использовать параметры в page файлах при создании методов???
+   return await this.page.request.get(`https://demoqa.com/Account/v1/User/${userID}`, {
       headers: {
-        'Authorization': `Bearer ${TOKEN}`
+        'Authorization': `Bearer ${token}`
       }
     });
-        
-    expect(await response.json().then(data => data.username)).toEqual(USERNAME);
-        
-    expect(await response.json().then(data => data.books.length)).toBe(0);
   }
-*/
+
+  async getUserName(response) { // можно ли использовать параметры в page файлах при создании методов???
+    return await response.json().then(data => data.username);
+  }
+
+  async getBookLength(response) { // можно ли использовать параметры в page файлах при создании методов???
+    return await response.json().then(data => data.books.length);
+  } 
+/*
+  async openBook() {
+    await this.bookToOpen.click();
+    
+    await this.page.screenshot({ path: 'BookContext.png' });  
+  }
+
+  async verifyNewNumberOfPages() {
+
+  }
+  */
 }

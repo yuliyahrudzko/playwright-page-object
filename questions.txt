@@ -1,8 +1,32 @@
 1. Why do we need this part? Что мы здесь должно прописать? и какие типи(?) бывают
   readonly page: Page;
   readonly userName: Locator;
-  readonly password: Locator;
-  readonly loginBtn: Locator;
-  readonly userId: Locator;
   readonly context: BrowserContext;
-2. Где объявлять переменные?
+
+2. Где объявлять переменные? в page файлах или тесте?
+
+3. Разобрать более подробно (что значит и как работает):
+  readonly context: BrowserContext;
+
+  constructor(page: Page, context: BrowserContext) {
+    this.context = context;
+  }
+
+4. Как объявлять переменные, которые используются в разных степах?
+
+5. Почему так не работает?
+  async createPromise() {
+    return this.page.waitForResponse(response =>
+      response.url() === 'https://demoqa.com/BookStore/v1/Books' && response.status() === 200
+    );
+  }
+
+  await playwrightBooks.createPromise(); // это отработает
+
+  async getNumberOfBooksInResponse() {
+    (await this.createPromise()).json().then(data => { //здесь тест упадёт с ошибкой: page.waitForResponse
+      return data.books.length;
+    });
+  }
+
+6. Можно ли использовать параметры в page файлах при создании методов???
