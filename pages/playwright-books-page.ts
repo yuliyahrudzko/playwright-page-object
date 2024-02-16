@@ -21,7 +21,7 @@ export class PlaywrightBooksPage {
     await this.page.screenshot( { path: 'screenshot.png' } );
   }
 
-  async getNumberOfBooksInResponse(booksResponse) { // можно ли использовать параметры в page файлах при создании методов???
+  async getNumberOfBooksInResponse(booksResponse) { //можно ли использовать параметры в page файлах при создании методов???
     return await booksResponse.json().then(data => { 
       return data.books.length;
     });
@@ -44,19 +44,19 @@ export class PlaywrightBooksPage {
     });
   }
 
-  async getResponse(userID, token) { // можно ли использовать параметры в page файлах при создании методов???
-   return await this.page.request.get(`https://demoqa.com/Account/v1/User/${userID}`, {
+  async getResponse(userID, token) { //можно ли использовать параметры в page файлах при создании методов???
+    return await this.page.request.get(`https://demoqa.com/Account/v1/User/${userID}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
   }
 
-  async getUserName(response) { // можно ли использовать параметры в page файлах при создании методов???
+  async getUserName(response) { //можно ли использовать параметры в page файлах при создании методов???
     return await response.json().then(data => data.username);
   }
 
-  async getBookLength(response) { // можно ли использовать параметры в page файлах при создании методов???
+  async getBookLength(response) { //можно ли использовать параметры в page файлах при создании методов???
     return await response.json().then(data => data.books.length);
   } 
 /*

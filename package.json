@@ -1,17 +1,23 @@
 {
-  "name": "6.page-object",
+  "name": "api",
   "version": "1.0.0",
-  "description": "",
+  "description": "playwright page object",
   "main": "index.js",
   "scripts": {
     "start:ui": "playwright test --ui",
-    "start": "playwright test"
+    "start": "playwright test",
+    "test:reports": "playwright show-report",
+    "lint-fix": "eslint . --ext .js,.jsx,.ts,.tsx,.json --fix"
   },
-  "keywords": [],
-  "author": "",
+  "author": "yuliya.grudko@mail.ru",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.41.1",
-    "@types/node": "^20.11.6"
+    "@playwright/test": "^1.39.0",
+    "@types/node": "^20.8.10",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "typescript": "^5.3.3"
   }
 }

@@ -21,7 +21,7 @@ test('Task 6: Page Object Model', async ({ page, context }) => {
 
     expect(playwrightlogin.getUserID).toBeTruthy();
 
-    userName = await playwrightlogin.getUserName(); // можно ли прописывать присвоение перменной здесь? (в шагах)
+    userName = await playwrightlogin.getUserName(); //можно ли прописывать присвоение перменной здесь? (в шагах)
 
     expect(playwrightlogin.getUserName()).toBeTruthy();
 
@@ -67,7 +67,7 @@ test('Task 6: Page Object Model', async ({ page, context }) => {
 
     await playwrightBooks.changeNumberOfPages(newPageCount);
   });
-/*
+  /*
   await test.step('Verify that number of pages was updated', async () => {
     const bookNumber = Math.floor(Math.random() * (await playwrightBooks.getNumberOfBooksOnUi() - 1) + 1);
  
