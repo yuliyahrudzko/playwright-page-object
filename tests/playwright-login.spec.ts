@@ -1,89 +1,94 @@
 import { test, expect } from '@playwright/test';
-import { PlaywrightLoginPage } from '../pages/playwright-login-page';
-import { PlaywrightProfilePage } from '../pages/playwright-profile-page';
-import { PlaywrightBooksPage } from '../pages/playwright-books-page';
+import { GetCookies } from '../utils/cookie';
+import { ApiParty } from '../utils/api-party';
+import { FormHelper } from '../utils/form-helper';
+import { LoginPage } from '../pages/login-page';
+import { ProfilePage } from '../pages/profile-page';
+import { BooksListPage } from '../pages/books-list-page';
 
-test('Task 6: Page Object Model', async ({ page, context }) => {
-  const playwrightlogin = new PlaywrightLoginPage(page,context);
-  let booksResponse, userName, userID, token; //как объявлять переменные, которые используются в разных степах?
+test('Task 6: Page Object Model', async ({ page }) => {
+  const login = new LoginPage(page);
+  const getCookie = new GetCookies(page);
+  const apiParty = new ApiParty(page); 
+  const profile = new ProfilePage(page); 
+  const formHelper = new FormHelper(page);
+  const booksList = new BooksListPage(page);
+  let booksResponse, userName, userID, token, numberOfBooksOnUi, numberOfBooksInResponse, newPageCount;
 
   await test.step('Log in to demoqa', async ( ) => {
+    await login.goto();
 
-    await playwrightlogin.goto();
-
-    await playwrightlogin.login();
+    await login.login();
 
     await expect(page).toHaveURL(/.*profile/);
   })
 
   await test.step('Get cookies', async () => {
-    userID = await playwrightlogin.getUserID();
+    userID = await getCookie.getUserID();
 
-    expect(playwrightlogin.getUserID).toBeTruthy();
+    expect(userID).toBeDefined();
 
-    userName = await playwrightlogin.getUserName(); //можно ли прописывать присвоение перменной здесь? (в шагах)
+    userName = await getCookie.getUserName(); 
 
-    expect(playwrightlogin.getUserName()).toBeTruthy();
+    expect(userName).toBeDefined();
 
-    expect(playwrightlogin.getExpiresCookie()).toBeTruthy();
+    expect(await getCookie.getExpires()).toBeDefined();
 
-    expect(playwrightlogin.getToken()).toBeTruthy();
+    token = await getCookie.getToken();
 
-    token = await playwrightlogin.getToken();
+    expect(token).toBeDefined();
   })
-
-  const playwrightProfile = new PlaywrightProfilePage(page);
 
   await test.step('Block images via page.route', async () => {
-    await playwrightProfile.blockImage();
+    await apiParty.blockImage();
   });
-
-  const playwrightBooks = new PlaywrightBooksPage(page);
 
   await test.step('Verify GET request', async () => {
-    await playwrightProfile.triggerGetRequest();
+    const promise = apiParty.createPromise();
 
-    booksResponse = await playwrightBooks.createPromise();
+    await profile.clickGoButton();
+
+    booksResponse = await promise;
+
+    expect(booksResponse.ok()).toBeDefined();
   })
 
-  await test.step('Verify status code of GET request', async () => {
-    expect(booksResponse.ok()).toBeTruthy(); //почему не работает если напрямую использовать await playwrightBooks.createPromise()?
-
-    expect(booksResponse.status()).toBe(200); //почему не работает если напрямую использовать await playwrightBooks.createPromise()?
-  });
-
-  await test.step('Make a screenshot of the Books page', async () => {
-    await playwrightBooks.makeScreenshot();
+  await test.step('Make a screenshot of the Books list page', async () => {
+    await formHelper.makeScreenshot('Books list.png');
 
     await expect(page).toHaveURL(/.*books/);
   });
 
-  await test.step('Verify that number of books on the UI = number of books in the body ', async () => {
-    expect(await playwrightBooks.getNumberOfBooksInResponse(booksResponse)).toEqual(await playwrightBooks.getNumberOfBooksOnUi());
+  await test.step('Verify that number of books on the UI = number of books in response ', async () => {
+    numberOfBooksInResponse = (await booksResponse.json()).books.length;
+
+    numberOfBooksOnUi = await booksList.getNumberOfBooksOnUi();
+
+    expect(numberOfBooksOnUi).toEqual(numberOfBooksInResponse);
   })
 
   await test.step('Change number of pages to the random value', async () => {
-    const newPageCount = String(Math.floor(Math.random() * (1000 - 1) + 1)); 
+    newPageCount = await formHelper.generateRandom(1000, 1);
 
-    await playwrightBooks.changeNumberOfPages(newPageCount);
+    await apiParty.changeNumberOfPages(newPageCount);
   });
-  /*
+
   await test.step('Verify that number of pages was updated', async () => {
-    const bookNumber = Math.floor(Math.random() * (await playwrightBooks.getNumberOfBooksOnUi() - 1) + 1);
+    const bookNumber = await formHelper.generateRandom(numberOfBooksOnUi, 1)
  
-    await page.locator(`.rt-tbody>div:nth-child(${bookNumber}) a`).click(); //как в названии локатора использовать переменную??
+    await booksList.openBook(bookNumber);
   
-    await expect(page.locator('#pages-wrapper #userName-value')).toHaveText(await playwrightBooks.getNumberOfBooksOnUi().toString()); // можно ли всё выражение прописать в page файле?
+    //await expect(page.locator('#pages-wrapper #userName-value')).toHaveText(newPageCount.toString());
   
-    await page.screenshot({ path: 'BookContext.png' });  
+    await formHelper.makeScreenshot('Book Context.png');
   });
-*/
-  await test.step('Verify info in Account request', async () => {
-    const response = await playwrightBooks.getResponse(userID, token);
 
-    expect(await playwrightBooks.getUserName(response)).toEqual(userName);
+  await test.step('Verify info in Account request', async () => {
+    const response = await formHelper.getResponse(userID, token);
+
+    expect((await response.json()).username).toEqual(userName);
         
-    expect(await playwrightBooks.getBookLength(response)).toBe(0);
+    expect((await response.json()).books.length).toBe(0);
   });
 
 })

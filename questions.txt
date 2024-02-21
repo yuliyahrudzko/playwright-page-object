@@ -1,32 +1,6 @@
-1. Why do we need this part? Что мы здесь должно прописать? и какие типи(?) бывают
-  readonly page: Page;
-  readonly userName: Locator;
-  readonly context: BrowserContext;
+Adding a baseURL
+It is also recommended to specify the baseURL in the use:
+{} section of your config, so that tests can use relative urls and you don't have to specify the full URL over and over again.
 
-2. Где объявлять переменные? в page файлах или тесте?
-
-3. Разобрать более подробно (что значит и как работает):
-  readonly context: BrowserContext;
-
-  constructor(page: Page, context: BrowserContext) {
-    this.context = context;
-  }
-
-4. Как объявлять переменные, которые используются в разных степах?
-
-5. Почему так не работает?
-  async createPromise() {
-    return this.page.waitForResponse(response =>
-      response.url() === 'https://demoqa.com/BookStore/v1/Books' && response.status() === 200
-    );
-  }
-
-  await playwrightBooks.createPromise(); // это отработает
-
-  async getNumberOfBooksInResponse() {
-    (await this.createPromise()).json().then(data => { //здесь тест упадёт с ошибкой: page.waitForResponse
-      return data.books.length;
-    });
-  }
-
-6. Можно ли использовать параметры в page файлах при создании методов???
+When using page.goto(), page.route(), page.waitForURL(), page.waitForRequest(), or page.waitForResponse() 
+it takes the base URL in consideration by using the URL() constructor for building the corresponding URL.
