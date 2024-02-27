@@ -16,6 +16,4 @@ export class BooksListPage {
   async openBook(number) {
     await this.page.locator(`.rt-tbody>div:nth-child(${number}) a`).click();
   }
-
-
 }

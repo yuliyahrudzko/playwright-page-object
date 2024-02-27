@@ -1,5 +1,5 @@
 import { Locator, Page} from '@playwright/test';
-import { username, password } from '../fixtures/users.json';
+
 
 export class LoginPage {
   readonly page: Page;
@@ -14,15 +14,12 @@ export class LoginPage {
     this.loginBtn = page.locator('#login');
   }
 
-  async goto() {
-    await this.page.goto('/login');
-  }
-
-  async enterUsername() {
+  //Imperative: 
+  async enterUsername(username: string) {
     await this.userName.fill(username);
   }
 
-  async enterPassword() {
+  async enterPassword(password: string) {
     await this.password.fill(password);
   }
 
@@ -30,9 +27,9 @@ export class LoginPage {
     await this.loginBtn.click();
   }
 
-  async login() {
-    await this.enterPassword();
-    await this.enterUsername();
+  async login(username: string, password: string) {
+    await this.enterPassword(username);
+    await this.enterUsername(password);
     await this.clickLogin();
   }
 }

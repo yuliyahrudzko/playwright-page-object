@@ -27,4 +27,12 @@ export class ApiParty { //переименовать
       });
     });
   }
+
+  async getResponse(userID: string, token: string) { 
+    return await this.page.request.get(`/Account/v1/User/${userID}`, { 
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  }
 }

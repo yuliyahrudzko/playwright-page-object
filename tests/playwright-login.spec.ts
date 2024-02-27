@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { username, password } from '../fixtures/users.json';
 import { GetCookies } from '../utils/cookie';
 import { ApiParty } from '../utils/api-party';
 import { FormHelper } from '../utils/form-helper';
@@ -16,9 +17,10 @@ test('Task 6: Page Object Model', async ({ page }) => {
   let booksResponse, userName, userID, token, numberOfBooksOnUi, numberOfBooksInResponse, newPageCount;
 
   await test.step('Log in to demoqa', async ( ) => {
-    await login.goto();
+    await formHelper.goto('/login');
 
-    await login.login();
+    //Declarative:
+    await login.login(username, password);
 
     await expect(page).toHaveURL(/.*profile/);
   })
@@ -84,11 +86,10 @@ test('Task 6: Page Object Model', async ({ page }) => {
   });
 
   await test.step('Verify info in Account request', async () => {
-    const response = await formHelper.getResponse(userID, token);
+    const response = await apiParty.getResponse(userID, token);
 
     expect((await response.json()).username).toEqual(userName);
         
     expect((await response.json()).books.length).toBe(0);
   });
-
 })

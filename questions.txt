@@ -4,3 +4,7 @@ It is also recommended to specify the baseURL in the use:
 
 When using page.goto(), page.route(), page.waitForURL(), page.waitForRequest(), or page.waitForResponse() 
 it takes the base URL in consideration by using the URL() constructor for building the corresponding URL.
+
+
+return (await this.page.context().cookies('https://demoqa.com/')).find(c => c.name === name)?.value;
+как не использовать url напрямую?

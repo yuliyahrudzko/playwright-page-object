@@ -7,6 +7,11 @@ export class FormHelper {
     this.page = page;
   }
 
+  //Actor
+  async goto(path: string) {
+    await this.page.goto(path);
+  }
+
   async makeScreenshot(name: string){
     await this.page.screenshot( { path: name } );
   }
@@ -14,13 +19,4 @@ export class FormHelper {
   async generateRandom(min: number, max: number){
     return String(Math.floor(Math.random() * (max - min)) + min);
   }
-
-  async getResponse(userID: string, token: string) { //или в апи?
-    return await this.page.request.get(`https://demoqa.com/Account/v1/User/${userID}`, { //добавить url в config
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-  }
-
 }
