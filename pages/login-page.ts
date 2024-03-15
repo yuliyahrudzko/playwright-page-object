@@ -1,6 +1,5 @@
 import { Locator, Page} from '@playwright/test';
 
-
 export class LoginPage {
   readonly page: Page;
   readonly userName: Locator;
@@ -14,7 +13,7 @@ export class LoginPage {
     this.loginBtn = page.locator('#login');
   }
 
-  //Imperative: 
+  //Imperative:
   async enterUsername(username: string) {
     await this.userName.fill(username);
   }
@@ -23,13 +22,13 @@ export class LoginPage {
     await this.password.fill(password);
   }
 
-  async clickLogin() {
+  async clickLoginButton() {
     await this.loginBtn.click();
   }
 
   async login(username: string, password: string) {
-    await this.enterPassword(username);
-    await this.enterUsername(password);
-    await this.clickLogin();
+    await this.enterUsername(username);
+    await this.enterPassword(password);
+    await this.clickLoginButton();
   }
 }

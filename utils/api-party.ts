@@ -11,7 +11,7 @@ export class ApiParty { //переименовать
     await this.page.route(/.(png|jpeg|img)$/, route => route.abort());
   }
 
-  async createPromise() {
+  async createPromiseForBooksRequest() {
     return this.page.waitForResponse('/BookStore/v1/Books')
   }
 
@@ -28,8 +28,8 @@ export class ApiParty { //переименовать
     });
   }
 
-  async getResponse(userID: string, token: string) { 
-    return await this.page.request.get(`/Account/v1/User/${userID}`, { 
+  async getUserInfoRequest(userID: string, token: string) {
+    return await this.page.request.get(`/Account/v1/User/${userID}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

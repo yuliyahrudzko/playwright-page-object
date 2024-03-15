@@ -10,8 +10,8 @@ import { BooksListPage } from '../pages/books-list-page';
 test('Task 6: Page Object Model', async ({ page }) => {
   const login = new LoginPage(page);
   const getCookie = new GetCookies(page);
-  const apiParty = new ApiParty(page); 
-  const profile = new ProfilePage(page); 
+  const apiParty = new ApiParty(page);
+  const profile = new ProfilePage(page);
   const formHelper = new FormHelper(page);
   const booksList = new BooksListPage(page);
   let booksResponse, userName, userID, token, numberOfBooksOnUi, numberOfBooksInResponse, newPageCount;
@@ -30,7 +30,7 @@ test('Task 6: Page Object Model', async ({ page }) => {
 
     expect(userID).toBeDefined();
 
-    userName = await getCookie.getUserName(); 
+    userName = await getCookie.getUserName();
 
     expect(userName).toBeDefined();
 
@@ -46,9 +46,9 @@ test('Task 6: Page Object Model', async ({ page }) => {
   });
 
   await test.step('Verify GET request', async () => {
-    const promise = apiParty.createPromise();
+    const promise = apiParty.createPromiseForBooksRequest();
 
-    await profile.clickGoButton();
+    await profile.clickGoToStoreButton();
 
     booksResponse = await promise;
 
@@ -64,19 +64,17 @@ test('Task 6: Page Object Model', async ({ page }) => {
   await test.step('Verify that number of books on the UI = number of books in response ', async () => {
     numberOfBooksInResponse = (await booksResponse.json()).books.length;
 
-    numberOfBooksOnUi = await booksList.getNumberOfBooksOnUi();
-
-    expect(numberOfBooksOnUi).toEqual(numberOfBooksInResponse);
+    await expect(booksList.booksCountOnUi).toHaveCount(numberOfBooksInResponse);
   })
 
   await test.step('Change number of pages to the random value', async () => {
-    newPageCount = await formHelper.generateRandom(1000, 1);
+    newPageCount = await formHelper.generateRandom(1, 1000);
 
     await apiParty.changeNumberOfPages(newPageCount);
   });
 
   await test.step('Verify that number of pages was updated', async () => {
-    const bookNumber = await formHelper.generateRandom(numberOfBooksOnUi, 1)
+    const bookNumber = await formHelper.generateRandom(1, numberOfBooksInResponse)
  
     await booksList.openBook(bookNumber);
   
@@ -86,7 +84,7 @@ test('Task 6: Page Object Model', async ({ page }) => {
   });
 
   await test.step('Verify info in Account request', async () => {
-    const response = await apiParty.getResponse(userID, token);
+    const response = await apiParty.getUserInfoRequest(userID, token);
 
     expect((await response.json()).username).toEqual(userName);
         

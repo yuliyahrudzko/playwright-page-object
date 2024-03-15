@@ -9,7 +9,7 @@ export class ProfilePage {
     this.goToStore = page.locator('#gotoStore');
   }
 
-  async clickGoButton() {
+  async clickGoToStoreButton() {
     await this.goToStore.click();
   }
 }
