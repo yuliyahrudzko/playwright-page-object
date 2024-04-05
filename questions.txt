@@ -1,3 +1,4 @@
 1. page.on and page.once
 2. page.removeListener('dialog', listener);
 3. Несколько Dialogs on the same page
+4. Цикл в тестах?

@@ -7,9 +7,8 @@ const authFile = 'playwright/.auth/user.json';
 setup('authenticate', async ({ page }) => {
   //Perform authentication steps
   const login = new LoginPage(page);
-  
   const formHelper = new FormHelper(page);
-
+ 
   await formHelper.goto('/login');
 
   await login.login(process.env.TEST_USER_USERNAME!, process.env.TEST_USER_PASSWORD!);
