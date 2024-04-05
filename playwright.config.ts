@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+require ('dotenv').config();
 
 export default defineConfig({
   //Look for test files in the "tests" directory, relative to this configuration file.
@@ -16,9 +17,8 @@ export default defineConfig({
 
   use: {
     baseURL: 'https://demoqa.com',
-
     //Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer
-    trace: 'on-first-retry',
+    trace: 'on',
     launchOptions: {
       logger: {
         isEnabled: (name, severity) => true,
@@ -29,19 +29,40 @@ export default defineConfig({
 
   /*Configure projects for major browsers */
   projects: [
+    //Setup project
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        //Use prepared auth state.
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        //Use prepared auth state.
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: {
+        ...devices['Desktop Safari'],
+        //Use prepared auth state.
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
     },
   ],
 });

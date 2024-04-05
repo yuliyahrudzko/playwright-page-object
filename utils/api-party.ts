@@ -35,4 +35,23 @@ export class ApiParty { //переименовать
       }
     });
   }
+
+  async addBookToUserProfile(userID: string, token: string, n: number, listOfBooks: object) {
+    for (let i = 0; i < n; i++) {
+      await this.page.request.post('/BookStore/v1/Books', {
+        headers: {
+          'Authorization':  `Bearer ${token}`
+        },
+        data: {
+          'userId': userID,
+          'collectionOfIsbns': [
+            {
+              'isbn': listOfBooks[i].isbn
+            }
+          ]
+        }
+      });
+    }
+  }
+
 }

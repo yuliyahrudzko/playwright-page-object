@@ -1,31 +1,22 @@
 import { test, expect } from '@playwright/test';
-import { username, password } from '../fixtures/users.json';
 import { GetCookies } from '../utils/cookie';
 import { ApiParty } from '../utils/api-party';
 import { FormHelper } from '../utils/form-helper';
-import { LoginPage } from '../pages/login-page';
 import { ProfilePage } from '../pages/profile-page';
 import { BooksListPage } from '../pages/books-list-page';
 
 test('Task 6: Page Object Model', async ({ page }) => {
-  const login = new LoginPage(page);
   const getCookie = new GetCookies(page);
   const apiParty = new ApiParty(page);
   const profile = new ProfilePage(page);
   const formHelper = new FormHelper(page);
   const booksList = new BooksListPage(page);
-  let booksResponse, userName, userID, token, numberOfBooksOnUi, numberOfBooksInResponse, newPageCount;
-
-  await test.step('Log in to demoqa', async ( ) => {
-    await formHelper.goto('/login');
-
-    //Declarative:
-    await login.login(username, password);
-
-    await expect(page).toHaveURL(/.*profile/);
-  })
+  let booksResponse, userName, userID, token, numberOfBooksInResponse, newPageCount;
 
   await test.step('Get cookies', async () => {
+
+    await formHelper.goto('/profile');
+
     userID = await getCookie.getUserID();
 
     expect(userID).toBeDefined();

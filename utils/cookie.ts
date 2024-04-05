@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-
+import authInfo from '../playwright/.auth/user.json'
 export class GetCookies {
   readonly page: Page;
 
@@ -8,7 +8,7 @@ export class GetCookies {
   }
 
   async getCookieByName(name: string) {
-    return (await this.page.context().cookies('https://demoqa.com/')).find(c => c.name === name)?.value;
+    return authInfo.cookies.find(c => c.name === name)?.value;
   }
 
   async getUserID() {

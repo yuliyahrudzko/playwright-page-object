@@ -1,10 +1,3 @@
-Adding a baseURL
-It is also recommended to specify the baseURL in the use:
-{} section of your config, so that tests can use relative urls and you don't have to specify the full URL over and over again.
-
-When using page.goto(), page.route(), page.waitForURL(), page.waitForRequest(), or page.waitForResponse() 
-it takes the base URL in consideration by using the URL() constructor for building the corresponding URL.
-
-
-return (await this.page.context().cookies('https://demoqa.com/')).find(c => c.name === name)?.value;
-как не использовать url напрямую?
+1. page.on and page.once
+2. page.removeListener('dialog', listener);
+3. Несколько Dialogs on the same page
