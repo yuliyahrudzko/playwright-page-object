@@ -1,6 +1,6 @@
 import { Locator, Page } from "@playwright/test";
 
-export class PlaywrightProfilePage {
+export class ProfilePage {
   readonly page: Page;
   readonly goToStore: Locator;
 
@@ -9,11 +9,7 @@ export class PlaywrightProfilePage {
     this.goToStore = page.locator('#gotoStore');
   }
 
-  async blockImage() {
-    await this.page.route(/.(png|jpeg|img)$/, route => route.abort());
-  }
-
-  async triggerGetRequest() {
+  async clickGoToStoreButton() {
     await this.goToStore.click();
   }
 }
