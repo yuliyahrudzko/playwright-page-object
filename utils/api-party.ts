@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 
-export class ApiParty { //переименовать
+export class ApiParty {
   readonly page: Page;
 
   constructor(page: Page) {
@@ -36,8 +36,8 @@ export class ApiParty { //переименовать
     });
   }
 
-  async addBookToUserProfile(userID: string, token: string, n: number, listOfBooks: object) {
-    for (let i = 0; i < n; i++) {
+  async addBooksToUserProfile(userID: string, token: string, arrayOfBooksNumbers, listOfBooks: object) {
+    for (let i = 0; i < arrayOfBooksNumbers.length; i++) {
       await this.page.request.post('/BookStore/v1/Books', {
         headers: {
           'Authorization':  `Bearer ${token}`
@@ -46,12 +46,11 @@ export class ApiParty { //переименовать
           'userId': userID,
           'collectionOfIsbns': [
             {
-              'isbn': listOfBooks[i].isbn
+              'isbn': listOfBooks[arrayOfBooksNumbers[i]].isbn
             }
           ]
         }
       });
     }
   }
-
 }

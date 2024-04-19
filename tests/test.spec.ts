@@ -3,14 +3,16 @@ import { GetCookies } from '../utils/cookie';
 import { ApiParty } from '../utils/api-party';
 import { FormHelper } from '../utils/form-helper';
 import { ProfilePage } from '../pages/profile-page';
+import { BooksListPage } from '../pages/books-list-page';
 
 test('Task 7: Shared State', async ({ page }) => {
   const getCookie = new GetCookies(page);
   const apiParty = new ApiParty(page);
   const profile = new ProfilePage(page);
   const formHelper = new FormHelper(page);
-  let n, token, userID, booksResponse, listOfAllBooks, booksInUserProfile, secondBookInProfile, listOfUserBooks;
-
+  const booksList = new BooksListPage(page);
+  let numberOfBooks, arrayOfBooksNumbers, token, userID, booksResponse, listOfAllBooks, listOfUserBooks;
+  
   await test.step('Add books', async () => {
     const promise = apiParty.createPromiseForBooksRequest();
 
@@ -20,51 +22,51 @@ test('Task 7: Shared State', async ({ page }) => {
 
     listOfAllBooks = (await booksResponse.json()).books;
 
-    n = await formHelper.generateRandom(2, 5);
+    numberOfBooks = await formHelper.generateRandom(2, 5);
 
-    console.log(`Количество книг, которые необходимо добавить: n = ${n}`);
+    console.log(`Количество книг, которые необходимо добавить: n = ${numberOfBooks}`);
 
     token = await getCookie.getToken();
 
     userID = await getCookie.getUserID();
 
-    booksInUserProfile = await apiParty.addBookToUserProfile(userID, token, n, listOfAllBooks);
+    arrayOfBooksNumbers = await formHelper.generateArrayOfBooksNumbers(numberOfBooks, listOfAllBooks);
+
+    console.log(`Номера книг, которые необходимо добавить: ${arrayOfBooksNumbers}`);
+
+    await apiParty.addBooksToUserProfile(userID, token, arrayOfBooksNumbers, listOfAllBooks);
   })
 
   await test.step('Check number of books in user profile', async () => {
+    await formHelper.goto('/profile');
+
+    await expect(booksList.booksCountOnUi).toHaveCount(Number(numberOfBooks));
+  })
+
+  await test.step('Check that information for added books is correct', async () => {
     const userInfo = await apiParty.getUserInfoRequest(userID, token);
 
     listOfUserBooks = (await userInfo.json()).books;
 
-    expect(listOfUserBooks.length).toBe(Number(n));
-    
-    secondBookInProfile = listOfUserBooks[1].isbn;
+    for (let i = 0; i < numberOfBooks; i++) {
+      expect(listOfUserBooks[i].title).toEqual(listOfAllBooks[arrayOfBooksNumbers[i]].title);
 
-    console.log(`isbn второй книги в профиле пользователя = ${secondBookInProfile}`);
-  })
+      expect(listOfUserBooks[i].author).toEqual(listOfAllBooks[arrayOfBooksNumbers[i]].author);
 
-  await test.step('Check that information for added books is correct', async () => {
-    for (let i = 0; i < n; i++) {
-      expect(listOfAllBooks[i].title).toEqual(listOfUserBooks[i].title);
-
-      expect(listOfAllBooks[i].author).toEqual(listOfUserBooks[i].author);
-
-      expect(listOfAllBooks[i].publisher).toEqual(listOfUserBooks[i].publisher);
+      expect(listOfUserBooks[i].publisher).toEqual(listOfAllBooks[arrayOfBooksNumbers[i]].publisher);
     }
   })
 
   await test.step('Click delete icon for the second book in user profile', async () => {
-    await formHelper.goto('/profile');
-
     await profile.clickDeleteIcon();
 
-    expect(page.locator('.modal-header div')).toHaveText('Delete Book');
+    await expect(profile.modalHeader).toHaveText('Delete Book');
 
-    expect(page.locator('.modal-body')).toHaveText('Do you want to delete this book?');
+    await expect(profile.modalBody).toHaveText('Do you want to delete this book?');
 
-    expect(page.locator('#closeSmallModal-ok')).toHaveText('OK');
+    await expect(profile.closeSmallModalOk).toHaveText('OK');
 
-    expect(page.locator('#closeSmallModal-cancel')).toHaveText('Cancel');
+    await expect(profile.closeSmallModalCancel).toHaveText('Cancel');
 
     await profile.clickOkButtonInDeleteModal();
   })
@@ -80,25 +82,26 @@ test('Task 7: Shared State', async ({ page }) => {
   })
 
   await test.step('Verify book was deleted', async () => {
-    const userInfo = await apiParty.getUserInfoRequest(userID, token);
-
     await formHelper.goto('/profile');
 
-    console.log(`Количество книг в профиле пользователя после удаления одной = ${(await userInfo.json()).books.length}`);
-
-    expect((await userInfo.json()).books.filter(item => item.isbn === secondBookInProfile).length).toBe(0);
+    if (numberOfBooks == 2) {
+      await expect(page.locator(`.rt-tbody > div:nth-of-type(2) a`)).toBeHidden();
+    }
+    else {
+      await expect(page.locator(`.rt-tbody > div:nth-of-type(2) a`)).not.toHaveText(listOfAllBooks[arrayOfBooksNumbers[1]].title);
+    }
   })
 
   await test.step('Delete All books', async () => {
     await profile.clickDeleteAllBooksButton();
 
-    expect(page.locator('.modal-header div')).toHaveText('Delete All Books');
+    await expect(profile.modalHeader).toHaveText('Delete All Books');
 
-    expect(page.locator('.modal-body')).toHaveText('Do you want to delete all books?');
+    await expect(profile.modalBody).toHaveText('Do you want to delete all books?');
 
-    expect(page.locator('#closeSmallModal-ok')).toHaveText('OK');
+    await expect(profile.closeSmallModalOk).toHaveText('OK');
 
-    expect(page.locator('#closeSmallModal-cancel')).toHaveText('Cancel');
+    await expect(profile.closeSmallModalCancel).toHaveText('Cancel');
 
     await profile.clickOkButtonInDeleteModal();
   })
@@ -114,10 +117,8 @@ test('Task 7: Shared State', async ({ page }) => {
   })
 
   await test.step('Verify all books were deleted', async () => {
-    const userInfo = await apiParty.getUserInfoRequest(userID, token);
-
-    console.log(`Количество книг в профиле пользователя после удаления всех = ${(await userInfo.json()).books.length}`)
-
-    expect((await userInfo.json()).books.length).toBe(0);
+    for (let i = 0; i < numberOfBooks; i++) {
+      await expect(page.locator(`.rt-tbody > div:nth-of-type(${i}) a`)).toBeHidden();
+    }
   })
 })
