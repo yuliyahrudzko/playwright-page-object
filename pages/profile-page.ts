@@ -4,36 +4,24 @@ export class ProfilePage {
   readonly page: Page;
   readonly goToStore: Locator;
   readonly deleteIcon: Locator;
-  readonly okButton: Locator;
   readonly deleteAllBooksButton: Locator;
-  readonly modalHeader: Locator;
-  readonly modalBody: Locator;
-  readonly closeSmallModalOk: Locator;
-  readonly closeSmallModalCancel: Locator;
-  readonly titleOfBookInProfile: Locator;
+  readonly bookTitle: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.goToStore = page.locator('#gotoStore');
-    this.deleteIcon = page.locator('.rt-tbody > div:nth-of-type(2) #delete-record-undefined');
-    this.okButton = page.locator('#closeSmallModal-ok');
+    this.deleteIcon = page.locator('.rt-tbody #delete-record-undefined');
     this.deleteAllBooksButton = page.locator('.buttonWrap div:nth-of-type(3) button').filter({ hasText: 'Delete All Books' });
-    this.modalHeader = page.locator('.modal-header div');
-    this.modalBody = page.locator('.modal-body');
-    this.closeSmallModalOk = page.locator('#closeSmallModal-ok');
-    this.closeSmallModalCancel = page.locator('#closeSmallModal-cancel');
+    this.bookTitle = page.locator('.rt-tbody > div a');
+
   }
 
   async clickGoToStoreButton() {
     await this.goToStore.click();
   }
 
-  async clickDeleteIcon() {
-    await this.deleteIcon.click()
-  }
-
-  async clickOkButtonInDeleteModal() {
-    await this.okButton.click()
+  async clickDeleteIcon(index) {
+    await this.deleteIcon.nth(index).click()
   }
 
   async clickDeleteAllBooksButton() {

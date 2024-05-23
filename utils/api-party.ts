@@ -28,6 +28,14 @@ export class ApiParty {
     });
   }
 
+  async deleteBooksInUserProfile (userID: string, token: string) {
+    return await this.page.request.delete(`/BookStore/v1/Books?UserId=${userID}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  }
+
   async getUserInfoRequest(userID: string, token: string) {
     return await this.page.request.get(`/Account/v1/User/${userID}`, {
       headers: {
@@ -36,21 +44,25 @@ export class ApiParty {
     });
   }
 
-  async addBooksToUserProfile(userID: string, token: string, arrayOfBooksNumbers, listOfBooks: object) {
-    for (let i = 0; i < arrayOfBooksNumbers.length; i++) {
-      await this.page.request.post('/BookStore/v1/Books', {
-        headers: {
-          'Authorization':  `Bearer ${token}`
-        },
-        data: {
-          'userId': userID,
-          'collectionOfIsbns': [
-            {
-              'isbn': listOfBooks[arrayOfBooksNumbers[i]].isbn
-            }
-          ]
-        }
-      });
-    }
+  async addBooksToUserProfile(userID: string, token: string, listOfBooks) {
+
+    console.log(listOfBooks)
+    //eslint-disable-next-line no-unused-labels
+    const isbnList = listOfBooks.map(x => {
+      const obj = {isbn: x.isbn};
+      return obj;
+    });
+
+    console.log(isbnList)
+
+    await this.page.request.post('/BookStore/v1/Books', {
+      headers: {
+        'Authorization':  `Bearer ${token}`
+      },
+      data: {
+        'userId': userID,
+        'collectionOfIsbns': isbnList
+      }
+    });
   }
 }
