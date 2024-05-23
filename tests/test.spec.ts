@@ -7,7 +7,7 @@ import { BooksListPage } from '../pages/books-list-page';
 import { Dialogs } from '../pages/dialogs';
 import Chance from 'chance';
 
-test.only('Task 7: Shared State', async ({ page }) => {
+test('Task 7: Shared State', async ({ page }) => {
   const getCookie = new GetCookies(page);
   const apiParty = new ApiParty(page);
   const profile = new ProfilePage(page);

@@ -47,10 +47,8 @@ export class ApiParty {
   async addBooksToUserProfile(userID: string, token: string, listOfBooks) {
 
     console.log(listOfBooks)
-    //eslint-disable-next-line no-unused-labels
     const isbnList = listOfBooks.map(x => {
-      const obj = {isbn: x.isbn};
-      return obj;
+      return {isbn: x.isbn};
     });
 
     console.log(isbnList)
