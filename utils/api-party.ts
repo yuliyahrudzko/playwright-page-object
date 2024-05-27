@@ -1,6 +1,6 @@
 import { Page } from "@playwright/test";
 
-export class ApiParty { //переименовать
+export class ApiParty {
   readonly page: Page;
 
   constructor(page: Page) {
@@ -28,10 +28,38 @@ export class ApiParty { //переименовать
     });
   }
 
+  async deleteBooksInUserProfile (userID: string, token: string) {
+    return await this.page.request.delete(`/BookStore/v1/Books?UserId=${userID}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+  }
+
   async getUserInfoRequest(userID: string, token: string) {
     return await this.page.request.get(`/Account/v1/User/${userID}`, {
       headers: {
         'Authorization': `Bearer ${token}`
+      }
+    });
+  }
+
+  async addBooksToUserProfile(userID: string, token: string, listOfBooks) {
+
+    console.log(listOfBooks)
+    const isbnList = listOfBooks.map(x => {
+      return {isbn: x.isbn};
+    });
+
+    console.log(isbnList)
+
+    await this.page.request.post('/BookStore/v1/Books', {
+      headers: {
+        'Authorization':  `Bearer ${token}`
+      },
+      data: {
+        'userId': userID,
+        'collectionOfIsbns': isbnList
       }
     });
   }

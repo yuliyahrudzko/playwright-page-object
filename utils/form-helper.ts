@@ -1,7 +1,9 @@
+/*eslint-disable @typescript-eslint/no-explicit-any */
 import { Page } from "@playwright/test";
 
 export class FormHelper {
   readonly page: Page;
+  readonly array: any[] = [];
 
   constructor (page: Page) {
     this.page = page;
